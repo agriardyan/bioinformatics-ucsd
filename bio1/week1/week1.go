@@ -1,4 +1,4 @@
-package bio1
+package week1
 
 func PatternCount(text, pattern string) int {
 	k := len(pattern)
@@ -81,56 +81,41 @@ func PatternMatching(pattern, genome string) []int {
 		}
 	}
 	return startIndexArr
-
-	// re := regexp.MustCompile(pattern)
-	// genomeByteArr := []byte(genome)
-	// result := re.FindAllIndex(genomeByteArr, -1)
-	// var startIndexArr []int
-	// if result == nil {
-	// 	return startIndexArr
-	// }
-	// for _, v := range result {
-	// 	startIndexArr = append(startIndexArr, v[0])
-	// }
-	// return startIndexArr
 }
 
 func ClumpFinding(Genome string, k, L, t int) []string {
 	genomeLen := len(Genome)
-	// var div int
-	// div = genomeLen / L
-	// if genomeLen%L != 0 {
-	// 	div = genomeLen/(genomeLen-(genomeLen%L)) + 1
-	// }
-	// n := 0
 	substr := ""
+	commonPatternMap := make(map[string]struct{})
 	var clumpArr []string
 	for i, _ := range Genome {
 		if i+L-1 >= genomeLen {
 			break
 		}
 		substr = Genome[i : i+L]
-		dict := find(substr, k, L, t)
+		localCommonPatternMap := find(substr, k, L, t)
+		for k, _ := range localCommonPatternMap {
+			if _, ok := commonPatternMap[k]; !ok {
+				commonPatternMap[k] = struct{}{}
+				clumpArr = append(clumpArr, k)
+			}
+		}
 	}
-	// for n < div {
-	// 	end := n + L
-	// 	if genomeLen < n+L {
-	// 		end = genomeLen
-	// 	}
-	// 	substr = Genome[n:end]
-	// 	clumpArr = append(clumpArr, find(substr, k, L, t)...)
-	// 	n += L
-	// }
+
 	return clumpArr
 }
 
-func find(substr string, k, l, t int) map[string]int {
+func find(substr string, k, l, t int) map[string]struct{} {
 	dict := make(map[string]int)
+	commonPatternMap := make(map[string]struct{}) // hate this but go doesn't have set so yeah
 	for i, _ := range substr {
 		if i+k-1 >= l {
 			break
 		}
 		dict[substr[i:i+k]]++
+		if dict[substr[i:i+k]] >= t {
+			commonPatternMap[substr[i:i+k]] = struct{}{}
+		}
 	}
-	return dict
+	return commonPatternMap
 }
