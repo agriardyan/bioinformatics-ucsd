@@ -83,7 +83,8 @@ func ApproximatePatternMatchingCount(pattern, genome string, tolerance int) int 
 }
 
 func FreqWordWithApproximatePatternMatching(genome string, k, tolerance int) []string {
-	setMap := make(map[int]map[string]struct{})
+	setMap := make(map[string]struct{})
+	finalMap := make(map[string]int)
 	var resultArr []string
 	genomeLen := len(genome)
 	max := 0
@@ -91,59 +92,69 @@ func FreqWordWithApproximatePatternMatching(genome string, k, tolerance int) []s
 		if i+k > genomeLen {
 			break
 		}
-
-		subGenome := genome[i:]
 		kmer := genome[i : i+k]
-		max, setMap = findSimilar(subGenome, kmer, tolerance, setMap)
+		setMap = mutate(kmer, tolerance)
+
+		//join to finalMap
+		for setMapKey, _ := range setMap {
+			result := finalMap[setMapKey] + 1
+			finalMap[setMapKey] = result
+			if max < result {
+				max = result
+			}
+		}
 	}
 
-	for k, _ := range setMap[max] {
-		resultArr = append(resultArr, k)
+	for k, v := range finalMap {
+		if v >= max {
+			resultArr = append(resultArr, k)
+		}
 	}
 
 	return resultArr
 }
 
-func findSimilar(genome, kmer string, tolerance int, setMap map[int]map[string]struct{}) (int, map[int]map[string]struct{}) {
-	k := len(kmer)
-	pool := make(map[string]int)
-	genomeLen := len(genome)
-	max := 0
-	for i, _ := range genome {
-		if i+k > genomeLen {
-			break
-		}
-
-		comparedKmer := genome[i : i+k]
-		if HammingDistance(kmer, comparedKmer) <= tolerance {
-			result := pool[comparedKmer] + 1
-			if max < result {
-				max = result
-			}
-
-			pool[comparedKmer] = pool[comparedKmer] + 1
-
-			if setMap[result] == nil {
-				setMap[result] = make(map[string]struct{})
-			}
-
-			setMap[result][comparedKmer] = struct{}{}
-		}
-	}
-	return max, setMap
-}
-
 var base = [4]string{"A", "T", "G", "C"}
 
-func mutate(kmer string) {
+func mutate(kmer string, tolerance int) map[string]struct{} {
+	setMap := make(map[string]struct{})
+	if tolerance < 1 {
+		setMap[kmer] = struct{}{}
+		return setMap
+	}
+	setMap = mutateOne(kmer)
+	for i := 0; i < tolerance-1; i++ {
+		localMap := make(map[string]struct{})
+		for k, _ := range setMap {
+			mutationMap := mutateOne(k)
+
+			//join to localMap
+			for mutKey, _ := range mutationMap {
+				if _, ok := localMap[mutKey]; !ok {
+					localMap[mutKey] = struct{}{}
+				}
+			}
+			delete(setMap, k)
+		}
+		//join to setMap
+		for localKey, _ := range localMap {
+			if _, ok := setMap[localKey]; !ok {
+				setMap[localKey] = struct{}{}
+			}
+		}
+	}
+	return setMap
+}
+func mutateOne(kmer string) map[string]struct{} {
 	setMap := make(map[string]struct{})
 	for i := range kmer {
 		for _, b := range base {
-			val := kmer[:i] + b + kmer[i:]
+			val := kmer[:i] + b + kmer[i+1:]
 			if val == kmer {
 				continue
 			}
 			setMap[val] = struct{}{}
 		}
 	}
+	return setMap
 }
