@@ -1,6 +1,7 @@
 package week2
 
 import (
+	"bioinformatics/bio1/week1"
 	"fmt"
 )
 
@@ -114,6 +115,50 @@ func FreqWordWithApproximatePatternMatching(genome string, k, tolerance int) []s
 	return resultArr
 }
 
+func FreqWordWithApproximatePatternMatchingAndReverse(genome string, k, tolerance int) (string, int) {
+	finalMap := make(map[string]int)
+	// finalReverseMap := make(map[string]int)
+	result := ""
+	genomeLen := len(genome)
+	max := 0
+	for i, _ := range genome {
+		if i > genomeLen-k {
+			break
+		}
+		kmer := genome[i : i+k]
+		finalMap[kmer]++
+	}
+
+	for key, _ := range finalMap {
+		kReverse := week1.ReverseComplement(key)
+		if key == kReverse {
+			continue
+		}
+		count := finalMap[key] + finalMap[kReverse]
+
+		mutationMap := mutate(key, tolerance)
+		for m, _ := range mutationMap {
+			mReverse := week1.ReverseComplement(m)
+			count += finalMap[m] + finalMap[mReverse]
+		}
+
+		if count > max {
+			result = key + " " + kReverse
+			max = count
+		}
+	}
+
+	return result, max
+}
+
+func reverse(s string) string {
+	chars := []rune(s)
+	for i, j := 0, len(chars)-1; i < j; i, j = i+1, j-1 {
+		chars[i], chars[j] = chars[j], chars[i]
+	}
+	return string(chars)
+}
+
 var base = [4]string{"A", "T", "G", "C"}
 
 func mutate(kmer string, tolerance int) map[string]struct{} {
@@ -145,6 +190,7 @@ func mutate(kmer string, tolerance int) map[string]struct{} {
 	}
 	return setMap
 }
+
 func mutateOne(kmer string) map[string]struct{} {
 	setMap := make(map[string]struct{})
 	for i := range kmer {
