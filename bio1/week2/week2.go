@@ -115,10 +115,9 @@ func FreqWordWithApproximatePatternMatching(genome string, k, tolerance int) []s
 	return resultArr
 }
 
-func FreqWordWithApproximatePatternMatchingAndReverse(genome string, k, tolerance int) (string, int) {
+func FreqWordWithApproximatePatternMatchingAndReverse(genome string, k, tolerance int) (map[string]string, int) {
 	finalMap := make(map[string]int)
-	// finalReverseMap := make(map[string]int)
-	result := ""
+	resultMap := make(map[int]map[string]string)
 	genomeLen := len(genome)
 	max := 0
 	for i, _ := range genome {
@@ -143,12 +142,20 @@ func FreqWordWithApproximatePatternMatchingAndReverse(genome string, k, toleranc
 		}
 
 		if count > max {
-			result = key + " " + kReverse
+
+			if resultMap[count] == nil {
+				nestedMap := make(map[string]string)
+				nestedMap[key] = kReverse
+				resultMap[count] = nestedMap
+			} else {
+				resultMap[count][key] = kReverse
+			}
+
 			max = count
 		}
 	}
 
-	return result, max
+	return resultMap[max], max
 }
 
 func reverse(s string) string {
