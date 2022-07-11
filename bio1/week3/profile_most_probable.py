@@ -1,3 +1,9 @@
+"""
+https://stepik.org/lesson/159/step/3?unit=8217
+
+Profile-most probable (part of Greedy Motif Search)
+"""
+
 import sys
 
 def structure_matrix(raw_matrix_str):
