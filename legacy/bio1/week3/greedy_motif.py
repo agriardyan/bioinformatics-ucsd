@@ -86,7 +86,7 @@ def calculate_next_motif(raw_dna_list, k):
 
 if __name__ == '__main__':
 
-    filename = "greedy_motif_dataset.txt"
+    filename = "bio1/week3/greedy_motif_dataset.txt"
     content = list()
     dna = ''
     k = 0

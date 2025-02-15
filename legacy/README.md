@@ -1,0 +1,2 @@
+As per 1 Feb 2025, I decided to move all codes to this folder `legacy` and start over using Jupyter Notebook. This is because I find it difficult to revisit the code, matching which code to which course, and get what the context of the code.
+By using Jupyter Notebook, I aim to have more thorough notes around the code itself.

@@ -46,7 +46,7 @@ def calculate_profile_most_probable(dna, k, prob_matrix):
 
 
 if __name__ == '__main__':
-    filename = "profile_most_probable_dataset.txt"
+    filename = "bio1/week3/profile_most_probable_dataset.txt"
     content = list()
     dna = ''
     k = 0

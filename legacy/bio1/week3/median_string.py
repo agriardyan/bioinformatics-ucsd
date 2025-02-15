@@ -1,3 +1,18 @@
+# In bioinformatics, the median string is an algorithm used to find a consensus sequence (or motif) from a set of DNA sequences. 
+# The goal is to identify a string that represents the most common elements across all sequences in the set.
+
+# How It Works
+# Input: A set of DNA sequences.
+# Process: The algorithm generates all possible substrings (l-mers) of a specified length from each sequence.
+# Consensus: It then finds the substring that appears most frequently across all sequences. This substring is the median string or consensus sequence.
+
+# Applications
+# Gene Regulatory Motifs: Identifying regulatory motifs that control gene expression.
+# Pattern Recognition: Finding common patterns in DNA sequences.
+
+# The median string algorithm is computationally intensive, especially for longer substrings, but it's a fundamental tool in bioinformatics for motif discovery.
+
+
 import sys
 import itertools
 
